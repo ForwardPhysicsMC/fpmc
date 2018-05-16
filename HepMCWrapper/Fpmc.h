@@ -30,6 +30,11 @@ namespace fpmc
 
     const HepMC::GenEvent* event() const { return hepMCEvt_; } 
 
+    template <class Select>
+    bool filter_event(Select select_);  
+
+    void clear_event();  
+
   private:
 
     HepMC::IO_HERWIG  conv_;
@@ -54,7 +59,7 @@ namespace fpmc
     bool debug_;
 
     CLHEP::HepRandomEngine* fRandomEngine_;
-    CLHEP::RandFlat*        fRandomGenerator_; 
+    CLHEP::RandFlat*        fRandomGenerator_;
   };
 } 
 

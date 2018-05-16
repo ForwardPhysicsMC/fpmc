@@ -1,4 +1,5 @@
 #include "Fpmc.h"
+#include "EventFilter.h"
 
 #include <vector>
 #include <string>
@@ -47,7 +48,7 @@ int main(int argc, char **argv)
 
    // Read command line parameters 
    vector<string> command_line_parameters_;
-   if(argc > 1){
+   if(argc > 1) {
       command_line_parameters_.resize(argc - 1);
       copy(argv + 1, argv + argc, command_line_parameters_.begin());
    }
@@ -55,7 +56,7 @@ int main(int argc, char **argv)
    // Help option
    vector<string> help_str; help_str.push_back("-h"); help_str.push_back("--help");
    for(vector<string>::const_iterator it_help = help_str.begin();
-                                      it_help != help_str.end(); ++it_help){
+                                      it_help != help_str.end(); ++it_help) {
       if( find(command_line_parameters_.begin(), command_line_parameters_.end(), *it_help) != command_line_parameters_.end() ){ 
          print_help(required_parameters_,optional_parameters_);
          return 0;
@@ -65,7 +66,7 @@ int main(int argc, char **argv)
    // Read required parameters
    map<string,string> required_parameters_map_;
    for(vector<string>::const_iterator it_par = required_parameters_.begin();
-                                      it_par != required_parameters_.end(); ++it_par){
+                                      it_par != required_parameters_.end(); ++it_par) {
       stringstream par_ss; par_ss << "--"; par_ss << *it_par;
       vector<string>::const_iterator it_par_key = find(command_line_parameters_.begin(), command_line_parameters_.end(), par_ss.str());
 
@@ -78,7 +79,7 @@ int main(int argc, char **argv)
       vector<string>::const_iterator it_par_value = it_par_key + 1;
 
       if(  it_par_value == command_line_parameters_.end() ||
-           find(required_parameters_.begin(), required_parameters_.end(), *it_par_value) != required_parameters_.end() ){
+           find(required_parameters_.begin(), required_parameters_.end(), *it_par_value) != required_parameters_.end() ) {
 	 stringstream oss;
 	 oss << "ERROR: Invalid value for parameter: " << *it_par << endl;      
 	 throw runtime_error( oss.str() );
@@ -90,7 +91,7 @@ int main(int argc, char **argv)
    // Read optional parameters
    map<string,string> optional_parameters_map_;
    for(vector<string>::const_iterator it_par = optional_parameters_.begin();
-                                      it_par != optional_parameters_.end(); ++it_par){
+                                      it_par != optional_parameters_.end(); ++it_par) {
       stringstream par_ss; par_ss << "--"; par_ss << *it_par;
       vector<string>::const_iterator it_par_key = find(command_line_parameters_.begin(), command_line_parameters_.end(), par_ss.str());
 
@@ -99,7 +100,7 @@ int main(int argc, char **argv)
       vector<string>::const_iterator it_par_value = it_par_key + 1;
 
       if(  it_par_value == command_line_parameters_.end() ||
-           find(optional_parameters_.begin(), optional_parameters_.end(), *it_par_value) != optional_parameters_.end() ){
+           find(optional_parameters_.begin(), optional_parameters_.end(), *it_par_value) != optional_parameters_.end() ) {
 	 stringstream oss;
 	 oss << "ERROR: Invalid value for parameter: " << *it_par << endl;      
 	 throw runtime_error( oss.str() );
@@ -137,7 +138,7 @@ int main(int argc, char **argv)
    input.open( datacard_.c_str() );
 
    vector<string> fpmc_params_;
-   while( !input.eof() ){
+   while( !input.eof() ) {
       char line[256];
       input.getline(line,256);
   
@@ -149,19 +150,49 @@ int main(int argc, char **argv)
    //fpmc::Fpmc* generator = new fpmc::Fpmc(comEnergy_,-1,fpmc_params_);
    generator->begin();
 
+   bool selectZZ = false;
+   bool debug_filter = false;
+   std::vector<int> pid_list; pid_list.push_back(11); pid_list.push_back(13);
+   IsZZ_Event isZZ_list_had1(pid_list,debug_filter);
+   isZZ_list_had1.SetHadronic(0);
+   IsZZ_Event isZZ_list_had2(pid_list,debug_filter);
+   isZZ_list_had2.SetHadronic(1);
+
+   unsigned int n_events_all = 0;
+   unsigned int n_events_selected = 0;
    //HepMC::IO_GenEvent* output = new HepMC::IO_GenEvent("fpmc.hepmc",ios::out);
    HepMC::IO_GenEvent output(outputFileName_.c_str(),ios::out);
    cout << endl;
-   for(unsigned int evt = 0; evt < maxEvents_; ++evt){
+   for(unsigned int evt = 0; evt < maxEvents_; ++evt) {
       cout << "[FPMC Wrapper] Processing event " << (evt + 1) << endl;
       bool success = generator->run();
-      if(!success){
+      if(!success) {
          cout << "[FPMC Wrapper] WARNING: Event " << (evt + 1) << " failed." << endl;
          continue;
       }
-      output.write_event( generator->event() );
+
+      ++n_events_all;
+
+      // Filter events
+      const HepMC::GenEvent* event = generator->event();
+
+      /*if( generator->filter_event() ) {
+	 output.write_event( event );
+      }*/ 
+      if( selectZZ ){
+	 bool select_evt_ZZ_had1 = isZZ_list_had1( event );
+	 bool select_evt_ZZ_had2 = isZZ_list_had2( event );
+	 bool select_evt = select_evt_ZZ_had1 || select_evt_ZZ_had2;
+         if( select_evt ) { output.write_event( event ); ++n_events_selected; }
+      } else
+         { output.write_event( event ); ++n_events_selected; }
+
+      // Clear event 
+      if( event ) generator->clear_event();
    }    
    generator->end();
+
+   cout << "[FPMC Wrapper] Number of selected events: " << n_events_selected << " / " << n_events_all << endl; 
 
    return 0;
 }

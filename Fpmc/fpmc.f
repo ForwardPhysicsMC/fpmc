@@ -4555,21 +4555,32 @@ c            DIST(10)=0
             GOTO 999
          ELSEIF (NFLUX.EQ.10) THEN
 C CHR YURA
-            if(first) then
+C            if(first) then
+C                PARMA(1)='init0'
+C                VALU(1)=0.D0
+C                call pdfset(PARMA, VALU)
+C                first=.false.
+C             endif
+C     Reggeon 
+            IF (AUTPDF(IBEAM).EQ.'HWLHAPDF') THEN
+               PARMA(1)=AUTPDF(IBEAM)
+               VALU(1)=211
+            ELSE
+               if(first) then
                 PARMA(1)='init0'
                 VALU(1)=0.D0
                 call pdfset(PARMA, VALU)
                 first=.false.
-             endif
-C     Reggeon 
-            parma(1)='NPTYPE'
-            parma(2)='NGROUP'
-            parma(3)='NSET'
-            valu(1)=2
+               endif
+               parma(1)='NPTYPE'
+               parma(2)='NGROUP'
+               parma(3)='NSET'
+               valu(1)=2
 *            valu(2)=5
 *            valu(3)=2            ! GRV-P LO
-            valu(2)=1
-            valu(3)=1            ! OWENS
+               valu(2)=1
+               valu(3)=1            ! OWENS
+            ENDIF
 
             CALL PDFSET(PARMA,VALU)
             CALL STRUCTM(X,QSCA,UPV,DNV,USEA,DSEA,STR,CHM,BTM,TOP,GLU)
@@ -4619,21 +4630,26 @@ c            DIST(10)=0
 c            print *,'ind 1 glu :',xxx,qsca,dist(13)
             GOTO 999
             ELSEIF (IBEAM.EQ.2) THEN
-            if(first) then
-                PARMA(1)='init0'
-                VALU(1)=0.D0
-                call pdfset(PARMA, VALU)
-                first=.false.
-             endif
+C            if(first) then
+C                PARMA(1)='init0'
+C                VALU(1)=0.D0
+C                call pdfset(PARMA, VALU)
+C                first=.false.
+C             endif
 C     Reggeon 
-            parma(1)='NPTYPE'
-            parma(2)='NGROUP'
-            parma(3)='NSET'
-            valu(1)=2
+            IF (AUTPDF(IBEAM).EQ.'HWLHAPDF') THEN
+               PARMA(1)=AUTPDF(IBEAM)
+               VALU(1)=211
+            ELSE
+               parma(1)='NPTYPE'
+               parma(2)='NGROUP'
+               parma(3)='NSET'
+               valu(1)=2
 c            valu(2)=5
 c            valu(3)=2            ! GRV-P LO
-            valu(2)=1
-            valu(3)=1            ! OWENS
+               valu(2)=1
+               valu(3)=1            ! OWENS
+            ENDIF
 
             CALL PDFSET(PARMA,VALU)
             CALL STRUCTM(X,QSCA,UPV,DNV,USEA,DSEA,STR,CHM,BTM,TOP,GLU)
@@ -4685,21 +4701,26 @@ c            DIST(10)=0
             DIST(13)=XPQ(0)
             GOTO 999
             ELSEIF (IBEAM.EQ.1) THEN
-            if(first) then
-                PARMA(1)='init0'
-                VALU(1)=0.D0
-                call pdfset(PARMA, VALU)
-                first=.false.
-             endif
+C            if(first) then
+C                PARMA(1)='init0'
+C                VALU(1)=0.D0
+C                call pdfset(PARMA, VALU)
+C                first=.false.
+C             endif
 C     Reggeon 
-            parma(1)='NPTYPE'
-            parma(2)='NGROUP'
-            parma(3)='NSET'
-            valu(1)=2
+            IF (AUTPDF(IBEAM).EQ.'HWLHAPDF') THEN
+               PARMA(1)=AUTPDF(IBEAM)
+               VALU(1)=211
+            ELSE
+               parma(1)='NPTYPE'
+               parma(2)='NGROUP'
+               parma(3)='NSET'
+               valu(1)=2
 *            valu(2)=5
 *            valu(3)=2            ! GRV-P LO
-            valu(2)=1
-            valu(3)=1            ! OWENS
+               valu(2)=1
+               valu(3)=1            ! OWENS
+            ENDIF
 
             CALL PDFSET(PARMA,VALU)
             CALL STRUCTM(X,QSCA,UPV,DNV,USEA,DSEA,STR,CHM,BTM,TOP,GLU)

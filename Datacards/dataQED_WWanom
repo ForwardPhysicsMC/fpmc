@@ -1,3 +1,5 @@
+OUTPUT      0
+OUTPUTLHE   1
 NTNAME      'tmpntuple.ntp'
 LHEFILE     'FPMC_gamgamWW_anom_13TeV.lhe'
 MAXEV       1000
@@ -14,12 +16,12 @@ PTMIN       0.
 IFIT        10
 YWWMIN      0.
 YWWMAX      1.
-ISOFTM      1
+ISOFTM      0
 DKAPPA      0.
 LAMBDA      0.0
 Q2WWMN      0.
 Q2WWMX      4.
-A0W         2.5e-6
+A0W         5.0e-6
 ACW         0.0 
 A0Z         0.0
 ACZ         0.0 

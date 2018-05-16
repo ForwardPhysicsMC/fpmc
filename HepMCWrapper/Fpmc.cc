@@ -5,12 +5,8 @@
  */
 
 #include "Fpmc.h"
+//#include "EventFilter.h"
 #include "fostream.h"
-
-#include <sstream>
-#include <stdexcept>
-#include <iostream>
-#include <cstring>
 
 #include <HepMC/GenEvent.h>
 #include <HepMC/GenParticle.h>
@@ -25,6 +21,11 @@
 
 #include "herwig.h"
 #include "fpmc.h"
+
+#include <sstream>
+#include <stdexcept>
+#include <iostream>
+#include <cstring>
 
 using namespace std;
 using namespace fpmc;
@@ -42,11 +43,14 @@ Fpmc::Fpmc(double comEnergy, long int seed, vector<string> const& params):
   debug_ = false; 
 }
 
-Fpmc::~Fpmc(){
+Fpmc::~Fpmc() { }
+
+void Fpmc::write(std::ostream& out) {
+  hepMCEvt_->write(out);
 }
 
-void Fpmc::write(std::ostream& out){
-  hepMCEvt_->write(out);
+void Fpmc::clear_event() {
+  delete hepMCEvt_;
 }
 
 void Fpmc::begin() {
@@ -474,6 +478,44 @@ bool Fpmc::run() {
 	 hepMCEvt_->print();
       }
    }
-   
+
    return true;
 }
+
+template <class Select>
+bool Fpmc::filter_event(Select select_) {
+  
+   /*bool selectZZ = true;
+
+   // Filter events
+   if( selectZZ ){
+      bool debug_filter = false;
+      IsZZ_Event isZZ4mu(13,13,debug_filter);
+      IsZZ_Event isZZ4e(11,11,debug_filter);
+      IsZZ_Event isZZ2mu2e(13,11,debug_filter);
+      IsZZ_Event isZZ2e2mu(11,13,debug_filter);
+
+      bool select_evt_4mu   = isZZ4mu( hepMCEvt_ ); 
+      bool select_evt_4e    = isZZ4e( hepMCEvt_ ); 
+      bool select_evt_2mu2e = isZZ2mu2e( hepMCEvt_ ); 
+      bool select_evt_2e2mu = isZZ2e2mu( hepMCEvt_ ); 
+
+      std::vector<int> pid_list; pid_list.push_back(11); pid_list.push_back(13);
+      IsZZ_Event isZZ_list_had1(pid_list,debug_filter);
+      isZZ_list_had1.SetHadronic(0);
+      IsZZ_Event isZZ_list_had2(pid_list,debug_filter);
+      isZZ_list_had2.SetHadronic(1);
+
+      bool select_evt_ZZ_had1 = isZZ_list_had1( hepMCEvt_ );
+      bool select_evt_ZZ_had2 = isZZ_list_had2( hepMCEvt_ );
+      //bool select_evt = select_evt_4mu || select_evt_4e || select_evt_2mu2e || select_evt_2e2mu;
+      bool select_evt = select_evt_ZZ_had1 || select_evt_ZZ_had2;
+
+      return select_evt;
+   }
+
+   return true;*/
+
+   return select_( hepMCEvt_ );
+}
+

@@ -50,6 +50,7 @@ CERNLIB=`cernlib mathlib pawlib packlib` -L$(PWD) -lgfortran
 #CERNLIB=`cernlib mathlib pawlib packlib pdflib804` -L$(PWD) -lgfortran -L$(LHAPDFLIB) -lLHAPDF
 #CERNLIB=`cernlib` -L$(PWD) -lgfortran
 GSLLIB=`gsl-config --cflags --libs`
+#LAPACKLIB = -L/afs/cern.ch/sw/lcg/releases/LCG_87/lapack/3.5.0/x86_64-slc6-gcc49-opt/lib -Wl,-static -lLAPACK -Wl,-dy 
 
 #LHAPDF_BASE=/cvmfs/cms.cern.ch/slc6_amd64_gcc481/external/lhapdf/5.9.1-cms3
 LHAPDF_BASE=/afs/cern.ch/sw/lcg/external/MCGenerators/lhapdf/5.8.9/x86_64-slc6-gcc46-opt
@@ -218,6 +219,7 @@ $(ext_softc_obj_dest): $(OBJDIR)/%.o: $(EXTDIR)/softc/%.f
 
 #---- Parton densities
 ext_pdf = pdf/i_2006_fita.f pdf/i_2006_fitb.f pdf/qcd_2006.f pdf/h1qcd.f pdf/i_nlotables.f
+#ext_pdf = pdf/i_2006_fita.f pdf/i_2006_fitb.f pdf/qcd_2006_modgluon.f pdf/h1qcd.f pdf/i_nlotables.f
 ext_pdf_obj=$(ext_pdf:pdf/%.f=%.o)
 ext_pdf_dest=$(ext_pdf_obj:%=$(OBJDIR)/%)
 $(ext_pdf_dest): $(OBJDIR)/%.o: $(EXTDIR)/pdf/%.f
@@ -306,6 +308,8 @@ OBJEXT   = $(ext_obj_dest) $(ext_pdf_dest) $(ext_comphep_dest) $(ext_excl_aaaa_d
 	$(ext_CHIDeGG_obj_dest) $(ext_CHIDeDiphoton_obj_dest) 
 OBJUSR   = $(OBJDIR)/ntuple.o
 LIBS     = $(CERNLIB) $(LHAPDFLIB) $(GSLLIB) $(LIB_OMEGA)
+#LIBS     = $(LAPACKLIB) $(LHAPDFLIB) $(GSLLIB) $(LIB_OMEGA)
+#LIBS     = $(LAPACKLIB) $(GSLLIB) $(LIB_OMEGA)
 OBJRECO  = $(reco_obj_dest)
 
 

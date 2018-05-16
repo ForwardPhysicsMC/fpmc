@@ -1,8 +1,8 @@
-OUTPUT      0
-OUTPUTLHE   1
-NTNAME      'tmpntuple.ntp'
+OUTPUT      1
+OUTPUTLHE   0
+NTNAME       'fpmc_sd_dijets_13TeV.ntp'
 LHEFILE     'FPMC_SDDijets_13TeV_PTMIN_20.lhe'
-MAXEV       1000
+MAXEV       10000
 PART1       'E+'
 PART2	    'P'
 TYPEPR      'INC'
